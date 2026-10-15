@@ -14,18 +14,29 @@ npm run serve     # dist/ 를 로컬에서 띄워 보기
 
 ## 호스팅 — Cloudflare Pages
 
-대시보드에서 이 저장소를 연결할 때 아래와 같이 넣는다.
+**Pages 프로젝트로 만든다.** Workers 쪽으로 만들면 빌드 뒤에 `npx wrangler deploy` 가
+돌면서 `error occurred while running deploy command` 로 끝난다 — 이 저장소는 정적
+파일만 내보내므로 배포 명령이 필요 없다.
+
+1. Cloudflare 대시보드 → **Workers & Pages → Create → Pages → Connect to Git**
+2. 저장소 `a9sta/AuraWellness`, 브랜치 `main`
 
 | 칸 | 값 |
 |---|---|
-| Framework preset | None |
+| Framework preset | **None** |
 | Build command | `npm run build` |
 | Build output directory | `dist` |
-| 환경 변수 | `NODE_VERSION=20` |
+| Root directory | (비움) |
+| 환경 변수 | `NODE_VERSION` = `20` |
 
-`_headers` 와 `_redirects` 는 `dist/` 에 그대로 떨어지므로 따로 설정할 것이 없다.
-빌드는 `CF_PAGES_URL` 을 먼저 읽으므로 프로젝트 이름이 바뀌어도 canonical 이 맞는다.
-★`_redirects` 의 느낌표(`301!`)는 Netlify 전용이라 Cloudflare 주소일 때는 자동으로 빠진다.
+- Node 버전은 `.nvmrc` 와 `.node-version` 에도 `20` 으로 적어 두었다. 기본값이 낮으면
+  빌드가 깨지므로 환경 변수까지 같이 넣어 두는 편이 안전하다.
+- **wrangler.toml 을 두지 않는다.** 두면 Workers 빌드로 잡혀 배포 단계에서 실패한다.
+- `_headers` 와 `_redirects` 는 `dist/` 에 그대로 떨어지므로 따로 설정할 것이 없다.
+- 빌드는 `CF_PAGES_URL` 을 먼저 읽으므로 프로젝트 이름이 바뀌어도 canonical 이 맞는다.
+  ★`_redirects` 의 느낌표(`301!`)는 Netlify 전용이라 Cloudflare 주소일 때는 자동으로 빠진다.
+- ★빌드가 계속 막히면 로컬에서 `npm run build` 한 결과 `dist/` 를
+  **Pages → Upload assets** 로 올려도 된다(의존성이 없어 결과물이 같다).
 
 ## 이 사이트가 구하는 값 — 쏠림
 
