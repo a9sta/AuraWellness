@@ -1,0 +1,11 @@
+# Cloudflare Pages 설정.
+# 대시보드에서 이 저장소를 연결할 때 아래와 같이 넣으면 된다.
+#   Framework preset : None
+#   Build command    : npm run build
+#   Build output dir : dist
+#   Node version     : 20  (환경 변수 NODE_VERSION=20)
+#
+# ★`_headers` 와 `_redirects` 는 dist/ 에 그대로 떨어지므로 따로 적을 것이 없다.
+# ★빌드는 CF_PAGES_URL 을 먼저 읽는다. 프로젝트 이름이 바뀌어도 canonical 이 맞는다.
+name = "aurawellness"
+pages_build_output_dir = "dist"
