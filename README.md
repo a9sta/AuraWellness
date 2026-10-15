@@ -27,7 +27,7 @@ npm run serve     # dist/ 를 로컬에서 띄워 보기
 - Node 버전은 `.nvmrc` 와 `.node-version` 에도 `20` 으로 적어 두었다.
 - ★`wrangler.jsonc` 가 없으면 `error occurred while running deploy command` 로 끝난다.
   ★`pages_build_output_dir` 가 든 `wrangler.toml` 은 `wrangler deploy` 와 충돌하므로 쓰지 않는다.
-- 기준 주소는 `data/site.config.json` 의 `siteUrl`(`https://aurawellness.yovip77.workers.dev`).
+- 기준 주소는 `data/site.config.json` 의 `siteUrl`(`https://aurawellness-care.yovip77.workers.dev`).
   Workers Builds 는 `CF_PAGES_URL` 을 주지 않으므로, 실제 주소가 다르면 이 값을 고치고 다시 올린다.
 - `_headers` 와 `_redirects` 는 `dist/` 에 그대로 떨어진다. `301!` 는 Netlify 주소일 때만 붙는다.
 
