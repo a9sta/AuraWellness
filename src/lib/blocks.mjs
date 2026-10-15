@@ -232,7 +232,7 @@ export function kinList(sd, g, seedKey, num) {
   const items = g.kin.map((t) => `<li><a href="/${t.sidoSlug}/${t.slug}/"><span class="c-n">${esc(t.gu)}</span><span class="c-s">${esc(t.heavy)}${t.same ? '' : ' · 시도 밖'}</span></a></li>`).join('\n');
   return frame('kin2', 'alike', `${esc(g.name)}${josa(g.name, '과/와')} 쏠린 자락이 같은 시군구`,
     `<ul class="cells">\n${items}\n</ul>`,
-    `${esc(g.name)}의 두꺼운 자락은 ${esc(g.heavy)}입니다. 같은 자락으로 쏠린 곳은 사람이 모여 사는 쪽도 대체로 닮습니다.`, num);
+    esc(at(hash(seedKey, 'kl'), SEC.nearSub)), num);
 }
 
 /* ── 아래쪽 안내 링크 (글·약관 등 얕은 안내문용) ─────────────── */

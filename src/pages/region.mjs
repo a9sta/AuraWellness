@@ -197,7 +197,7 @@ export function guPage(ctx, sd, g) {
     ['구 전체 네 자락', `북동 ${g.quad[0]}% · 북서 ${g.quad[1]}% · 남서 ${g.quad[2]}% · 남동 ${g.quad[3]}%`],
     ['두꺼운 자락', `${esc(g.heavy)} — ${esc(quadTalk(g.heavy))}`],
     ['북쪽·동쪽 몫', `${g.north}% · ${g.east}% (치우침 ${g.tilt})`],
-    ['자락이 닮은 시군구', `${g.kinCount}곳을 골라 아래에 걸었습니다`],
+    ['자락이 닮은 시군구', g.kin.length ? `${esc(g.kin[0].gu)}(${esc(g.kin[0].heavy)}) · ${esc(g.kin[1].gu)}(${esc(g.kin[1].heavy)}) 외 ${g.kinCount - 2}곳` : '없음'],
     ['땅', km2(g.area)],
   ];
   if (mode === 'spot' && g.tiltSpot) {
@@ -215,9 +215,12 @@ export function guPage(ctx, sd, g) {
     far.push({ label: `${r.name} ${x.name}`, href: `/${r.slug}/${x.slug}/` });
   }
   const steps = stepSet(seed);
+  const sidoDeep = [];
+  for (const x of sd.gu) for (const y of x.spots) if (x.slug !== g.slug) sidoDeep.push({ label: `${x.name} ${y.name}`, href: `/${sd.slug}/${x.slug}/${y.slug}/` });
   const topics = topicLinks([
     { label: '코스 이름으로', items: courseTopic(sd, courses), anchor: COURSE_ANCHOR },
     { label: '자락이 닮은 시군구', items: g.kin.map((t) => ({ label: t.gu, href: `/${t.sidoSlug}/${t.slug}/` })), anchor: NEAR_ANCHOR },
+    ...(sidoDeep.length ? [{ label: `${sd.name} 동으로 바로`, items: sidoDeep, pick: 16, anchor: ANCHOR }] : []),
     { label: '다른 시군구', items: far, pick: 18, anchor: ANCHOR },
     { label: '먼저 읽을 것', items: DOC_LINKS },
   ], seed, '10', esc(at(h, SEC.topicHead, 8)), esc(at(h, SEC.topicSub, 3)));
@@ -285,7 +288,8 @@ export function sidoPage(ctx, sd) {
   const c = {
     name: sd.name, full: sd.full, guCount: sd.gu.length,
     spotCount: sd.spotCount, dongCount: sd.dongCount, ruralCount: sd.ruralCount,
-    avgTilt: sd.avgTilt,
+    avgTilt: sd.avgTilt, heavy: sd.heavy, tilt: sd.tilt, north: sd.north, east: sd.east,
+    tiltSpot: sd.tiltSpot, evenSpot: sd.evenSpot,
     place: sd.name,
     hours: cfg.hours, pay: cfg.pay, arrive: cfg.arrive,
     tel: cfg.tel, telLabel: cfg.telLabel,
@@ -338,7 +342,8 @@ export function sidoPage(ctx, sd) {
   for (const g of sd.gu) for (const x of g.spots) deep.push({ label: `${g.name} ${x.name}`, href: `/${sd.slug}/${g.slug}/${x.slug}/` });
   const steps = stepSet(seed);
   const topics = topicLinks([
-    { label: '코스 이름으로', items: courseTopic(sd, courses), anchor: COURSE_ANCHOR },
+    { label: `${sd.name} + 코스로`, items: courseTopic(sd, courses), anchor: COURSE_ANCHOR },
+    { label: '코스 한 장씩', items: courses.map((x) => ({ label: x.ko, href: `/course/${x.slug}/` })), anchor: COURSE_ANCHOR },
     ...(deep.length ? [{ label: `${sd.name} 동으로 바로`, items: deep, pick: 16, anchor: ANCHOR }] : []),
     { label: '다른 시도', items: far, pick: 16, anchor: ANCHOR },
     { label: '먼저 읽을 것', items: DOC_LINKS },
@@ -351,7 +356,7 @@ export function sidoPage(ctx, sd) {
     guIndex(sd, seed, null, '02'),
     pickBlock,
     csLinks,
-    courseRoll(courses, seed, sd.name, '05'),
+    courseRoll(courses, seed, sd.name, '05', { full: false }),
     faqHtml,
     stepTable(seed, '07'),
     topics,
@@ -382,6 +387,7 @@ export function sidoPage(ctx, sd) {
           courses,
         }),
         S.itemList(`${url}#gulist`, `${sd.name} 시군구`, sd.gu.map((g) => ({ name: g.name, url: `${siteUrl}/${sd.slug}/${g.slug}/` }))),
+        S.itemList(`${url}#courselist`, `${sd.name} 코스`, courses.map((c) => ({ name: `${sd.name} ${c.ko}`, url: `${siteUrl}/${sd.slug}/course/${c.slug}/` }))),
         S.faqPage(url, qa),
         S.howTo(url, `${sd.name}에서 부르는 다섯 걸음`, steps, cfg),
       ],
